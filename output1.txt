@@ -1,0 +1,71 @@
+1.1
+pwd
+/home/yann/Documents/INF2610/INF_2610_TP2
+
+ls
+Makefile     output1.txt  output3.txt  part1.c  README.md
+minisys.asm  output2.txt  output4.txt  part2.c  TP2_INF2610.pdf
+
+ls | sort
+Makefile
+minisys.asm
+output1.txt
+output2.txt
+output3.txt
+output4.txt
+part1.c
+part2.c
+README.md
+TP2_INF2610.pdf
+
+echo "message 1"
+message 1
+
+echo "message1" > foo.txt
+
+echo "message 2" >> foo.txt
+
+cat foo.txt
+message1
+message 2
+
+unlink foo.txt
+
+ls
+Makefile     output1.txt  output3.txt  part1.c  README.md
+minisys.asm  output2.txt  output4.txt  part2.c  TP2_INF2610.pdf
+
+uname
+Linux
+
+uname -s
+Linux
+
+uname -r
+6.5.0-14-generic
+
+uname -o
+GNU/Linux
+
+uname -m
+x86_64
+
+---------------------
+1.2
+
+a:
+echo $PATH
+/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin
+
+b:
+which sleep 1
+/usr/bin/sleep
+
+c:
+    - sleep 1s
+    - /usr/bin/sleep 1s
+    - cd / | /usr/bin/sleep 1s
+
+d:
+    cd / | /usr/bin/sleep 1000s
+    ^C (control c)
