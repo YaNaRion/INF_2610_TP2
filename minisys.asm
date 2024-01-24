@@ -9,7 +9,7 @@
 ;
 ; Déclarations de constantes (equivalent à #define)
     sys_write           equ    1
-    sys_exit            equ    60
+    sys_exit            equ    10
     stdout              equ    1
     sys_nanosleep       equ    35
 
@@ -21,6 +21,8 @@ SECTION .data
 ; man ascii -> code ascii en hexa de \n est 0x0A
     msg         db    "INF2610-TP1 ", 0x0A        ; char * msg = "INF2610-TP1 \n";
     msg_len     equ   $-msg                       ; msg_len = taille de msg
+    msg_pause   db    "Fin de la pause!", 0x0A 
+    msg_pause_len equ $-msg_pause
 
 
 ; Voir: man nanosleep pour les paramètres
@@ -59,12 +61,22 @@ _start:
     ; TODO: Pause avec sys_nanosleep suivi de sys_write "Fin de la pause!\n"
     ; prototype: nanosleep(   struct timespec *time1,
     ;                         struct timespec *time2)
+    mov         rdi, delay1
+    mov         rsi, delay2
+    mov         rax, sys_nanosleep
+    syscall
+
+    mov rdi, stdout
+    mov rsi, msg_pause
+    mov rdx, msg_pause_len
+    mov rax, sys_write
+    syscall
     
     
     ;
     ; Terminaison du processus
     ; prototype: _exit(int status)
     ;
-        xor     rdi, rdi      ; remise a zero
-        mov     rax, sys_exit ; appel systeme dans rax
-        syscall               ; interruption logicielle
+    ;    xor     rdi, rdi      ; remise a zero
+    ;    mov     rax, sys_exit ; appel systeme dans rax
+    ;    syscall               ; interruption logicielle

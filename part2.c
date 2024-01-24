@@ -4,6 +4,8 @@
  * Initlab - part2.c
  *
  * ajoutez vos noms, prénoms et matricules
+ * Julien Lavigne   2207643
+ * Yann Druet       2198643
 */
 
 #include <stdio.h>
@@ -11,6 +13,7 @@
 // Si besoin, ajouter ici les directives d'inclusion et les déclarations globales
 // -------------------------------------------------
 // TODO
+
 
 // -------------------------------------------------
 void part21 ()
@@ -21,6 +24,7 @@ void part21 ()
 void part22 ()
 {
  // TODO
+ 
 }
 
 int main (int argc, char* argv[])
