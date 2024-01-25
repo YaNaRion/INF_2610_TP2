@@ -33,7 +33,6 @@ void part22 ()
 {
  // TODO
     char buff[1024];
-    char messageWrite[] = "77dbcb01f571f1c32e196c3a7d26f62(printed using write)\n";
     size_t size = 1024;
     setvbuf(stdout, buff, _IONBF, size);
     part21();
