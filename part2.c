@@ -25,8 +25,7 @@ void part21 ()
     for (int i = 0; i < sizeof(messagePrintf)/sizeof(char); i++) {
         printf("%c", messagePrintf[i]);
     }
-    write(1, messageWrite, sizeof(messageWrite));
-
+    write(stdout, messageWrite, sizeof(messageWrite));
 }
 
 void part22 ()
