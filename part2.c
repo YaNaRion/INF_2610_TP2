@@ -14,22 +14,33 @@
 // -------------------------------------------------
 // TODO
 
+#include <unistd.h>
 
 // -------------------------------------------------
 void part21 ()
 {
  // TODO
+    char messageWrite[] = "77dbcb01f571f1c32e196c3a7d26f62(printed using write)\n";
+    char messagePrintf[] = "77dbcb01f571f1c32e196c3a7d26f62(printed using printf)";
+    for (int i = 0; i < sizeof(messagePrintf)/sizeof(char); i++) {
+        printf("%c", messagePrintf[i]);
+    }
+    write(1, messageWrite, sizeof(messageWrite));
+
 }
 
 void part22 ()
 {
  // TODO
- 
+    char buff[1024];
+    char messageWrite[] = "77dbcb01f571f1c32e196c3a7d26f62(printed using write)\n";
+    size_t size = 1024;
+    setvbuf(stdout, buff, _IONBF, size);
+    part21();
 }
 
 int main (int argc, char* argv[])
 {
-    
     if (argc!=2)
     {   printf("Le programme a un seul paramètre : 1 ou 2\n");
         return 1;
