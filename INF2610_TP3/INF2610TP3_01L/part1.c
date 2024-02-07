@@ -112,7 +112,7 @@ void question1()
     printf("Nombre d'enfants attendus: %d \n", directChildCount);
 
     printProcRegistrations();
-
+    execl("/usr/bin/ls", "-l", NULL);
 
     _exit(0);
 }
