@@ -15,38 +15,100 @@
 
 void question1()
 {
-    int parent1;
-    int parent2;
-    int parent3;
-   if((parent1 = fork()) ==0){
+    pid_t subparent1;
+    pid_t subparent2;
+    pid_t subparent3;
+    pid_t child1;
+    pid_t child2;
+    pid_t child3;
+    pid_t child4;
+    pid_t child5;
+    pid_t child6;
+    int childCount = 0;
+    int* tempChildCount = &childCount;
+
+    registerProc(getpid(), getppid(), 0, 0);
+
+   if((subparent1 = fork()) ==0){
     // 1.1
-    if (fork() == 0){
+    registerProc(getpid(), getppid(), 1, 1);
+    if ((child1 = fork()) == 0){
         // 2.1
+        registerProc(getpid(), getppid(), 2, 1);
+        _exit(0);
     }
-    if (fork() == 0) {
+    if ((child2 = fork()) == 0) {
+        registerProc(getpid(), getppid(), 2, 2);
+        _exit(0);
         // 2.2
     }
 
-   }
-   if((parent2 = fork()) == 0){
+    while(wait(NULL)>0) {
+    childCount++;
+   };
+
+    _exit(childCount);
+
+   } // fin parent 1
+
+   if((subparent2 = fork()) == 0){
     // 1.2
-    if (fork() ==0 ) {
+    registerProc(getpid(), getppid(), 1, 2);
+    
+    if ((child3 = fork()) ==0 ) {
         // 2.3
+        registerProc(getpid(), getppid(), 2, 3);
+        _exit(0);
+
     }
-   }
-   if((parent3 = fork()) == 0){}
+
+    while(wait(NULL)>0) {
+    childCount++;
+   };
+
+    _exit(childCount);
+
+   } // fin parent 2
+
+   if((subparent3 = fork()) == 0){
     // TODO
     // 1.3
-    if (fork() == 0) {
+    registerProc(getpid(), getppid(), 1, 3);
+
+    if ((child4 = fork()) == 0) {
+        registerProc(getpid(), getppid(), 2, 4);
+        _exit(0);
         // 2.4
     }
-    if( fork() == 0){
+    if( (child5 = fork()) == 0){
+        registerProc(getpid(), getppid(), 2, 5);
+        _exit(0);        
         // 2.5
     }
-    if( fork() == 0){
+    if( (child6 = fork()) == 0){
+        registerProc(getpid(), getppid(), 2, 6);
+        _exit(0);
         // 2.6
     }
 
-    while(wait(NULL)>0);
+
+    while(wait(NULL)>0) {
+    childCount++;
+   };
+    _exit(childCount);
+
+   } // fin parent 3
+
+
+   while(wait(tempChildCount)>0) {
+        childCount += *tempChildCount;
+   };
+
+
+    printf("Nombre d'enfants attendus: %d \n", childCount);
+
+    printProcRegistrations();
+
+
     _exit(0);
 }
