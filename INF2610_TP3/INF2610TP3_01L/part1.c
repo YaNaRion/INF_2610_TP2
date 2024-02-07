@@ -24,8 +24,10 @@ void question1()
     pid_t child4;
     pid_t child5;
     pid_t child6;
-    int childCount = 0;
-    int* tempChildCount = &childCount;
+    int directChildCount = 0;
+    int indirectChildCount = 0;
+    int* tempChildCount = &indirectChildCount;
+
 
     registerProc(getpid(), getppid(), 0, 0);
 
@@ -44,17 +46,17 @@ void question1()
     }
 
     while(wait(NULL)>0) {
-    childCount++;
+    directChildCount++;
    };
 
-    _exit(childCount);
+    _exit(directChildCount);
 
    } // fin parent 1
 
    if((subparent2 = fork()) == 0){
     // 1.2
     registerProc(getpid(), getppid(), 1, 2);
-    
+
     if ((child3 = fork()) ==0 ) {
         // 2.3
         registerProc(getpid(), getppid(), 2, 3);
@@ -63,10 +65,10 @@ void question1()
     }
 
     while(wait(NULL)>0) {
-    childCount++;
+    directChildCount++;
    };
 
-    _exit(childCount);
+    _exit(directChildCount);
 
    } // fin parent 2
 
@@ -93,19 +95,21 @@ void question1()
 
 
     while(wait(NULL)>0) {
-    childCount++;
+    directChildCount++;
    };
-    _exit(childCount);
+   
+    _exit(directChildCount);
 
    } // fin parent 3
 
 
    while(wait(tempChildCount)>0) {
-        childCount += *tempChildCount;
+        directChildCount += (*tempChildCount) / 256 ; // ajout des indirects
+        directChildCount++; // ajout des directs
    };
 
 
-    printf("Nombre d'enfants attendus: %d \n", childCount);
+    printf("Nombre d'enfants attendus: %d \n", directChildCount);
 
     printProcRegistrations();
 
