@@ -23,19 +23,18 @@ void* producteur(void* pid) {
 
     srand(time( NULL ));
     int x = 0;
-    int* somme = malloc(sizeof(int));
+    long* somme = malloc(sizeof(long));
 
     while(!flag_de_fin) {
         
         sem_wait(&P);
         sem_wait(&mutex);
 
-        if(!flag_de_fin) {
-            x =(rand() % 9) + 1;
-            chiffresProduits++;
-            tampon[ip] = x; 
-            ip = (ip+1) % tailleDuTampon; 
-        }
+        x =(rand() % 9) + 1;
+        chiffresProduits++;
+        tampon[ip] = x; 
+        *somme += x;
+        ip = (ip+1) % tailleDuTampon; 
 
         sem_post(&mutex);
         sem_post(&C);
@@ -45,7 +44,7 @@ void* producteur(void* pid) {
 
 void* consommateur(void* cid) {
 
-    int* somme = malloc(sizeof(int));
+    long* somme = malloc(sizeof(long));
 
     int valeurLue = 0;
     while (true) {
@@ -54,24 +53,23 @@ void* consommateur(void* cid) {
         sem_wait(&mutex);
 
         valeurLue = tampon[ic];
-        somme += valeurLue;
+        *somme += valeurLue;
         ic = (ic+1) % tailleDuTampon;
+        
         if (valeurLue != 0) {
             chiffresConsommes++;
         }
-        printf("%d \n", valeurLue);
+        
         sem_post(&mutex);
         sem_post(&P);
         
         if (valeurLue == 0) break;
     }
-
     pthread_exit((void*) somme);
 }
 
 void sigAlarmHandler(int signum) {
     flag_de_fin = true;
-    printf("ALARME %d \n", signum);
 }
 
 int main(int argc, char* argv[]) {
@@ -82,8 +80,8 @@ int main(int argc, char* argv[]) {
 
     int nbProds =  atoi(argv[1]);
     int nbCons = atoi(argv[2]);
-    int sommeProd[nbProds];
-    int sommeCons[nbCons];
+    long* sommeProd[nbProds];
+    long* sommeCons[nbCons];
     tailleDuTampon = atoi(argv[3]);
 
 
@@ -100,8 +98,8 @@ int main(int argc, char* argv[]) {
 
     // création des threads consommateurs
     pthread_t consThread[nbCons];
-    for(int i = 0; i < nbCons; i++) {
-        pthread_create(&consThread[i], NULL, consommateur, (void*) &i);
+    for(int j = 0; j < nbCons; j++) {
+        pthread_create(&consThread[j], NULL, consommateur, (void*) &j);
     }
 
     // alarme de 1 secondes qui met la variable flag_de_fin à true
@@ -110,39 +108,38 @@ int main(int argc, char* argv[]) {
 
     // attente de la fin des producteurs
     for(int i = 0; i < nbProds; i++) {
-        pthread_join(prodThread[i], (void**) &sommeProd[i]);
+        pthread_join(prodThread[i], (void**)&sommeProd[i]);
     }
 
     // tampon des consommateurs mis à 0 (pour les forcer à terminer)
+    sem_wait(&mutex);
     for (int i = 0; i <  nbCons; i++) {
         sem_wait(&P);
-        sem_wait(&mutex);
-        tampon[i] = 0;
-        sem_post(&mutex);
-        sem_post(&C);
+        tampon[(ic+i) % tailleDuTampon] = 0;
+        sem_post(&C);    
     }
-    
+    sem_post(&mutex);
 
     // attente de la fin des consommateurs
     for(int i = 0; i < nbCons; i++) {
-        pthread_join(consThread[i], (void**) &sommeCons[i]);
+        pthread_join(consThread[i], (void**)&sommeCons[i]);
     }
 
 
-    int sommeDesProducteurs = 0;
+    long sommeDesProducteurs = 0;
     for(int i = 0; i < nbProds; i++) {
-        sommeDesProducteurs += sommeProd[i];
-        // free(sommeProd[i]);
+        sommeDesProducteurs += *sommeProd[i];
+        free(sommeProd[i]);
     }
 
-    int sommeDesConsommateurs = 0;
+    long sommeDesConsommateurs = 0;
     for(int i = 0; i < nbCons; i++) {
-        sommeDesConsommateurs += sommeCons[i];
-        // free(sommeCons[i]);
+        sommeDesConsommateurs += *sommeCons[i];
+        free(sommeCons[i]);
     }
     
-    printf("somme des consommateurs: %d \n", sommeDesConsommateurs);
-    printf("somme des producteurs: %d \n", sommeDesProducteurs);
+    printf("somme des consommateurs: %ld \n", sommeDesConsommateurs);
+    printf("somme des producteurs: %ld \n", sommeDesProducteurs);
     printf("nombre chiffres produits: %d \n", chiffresProduits);
     printf("nombre chiffres consommés: %d \n", chiffresConsommes);
 
